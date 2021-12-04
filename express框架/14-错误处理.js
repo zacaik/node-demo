@@ -5,7 +5,7 @@ const app = express();
 const USERNAME_NOT_EXSIST = 'USERNAME_NOT_EXSIST';
 
 app.post("/login", (req, res, next) => {
-    const isLogin = false;
+    const isLogin = falseZ;
     if (isLogin) {
         res.json("登陆成功");
     } else {
