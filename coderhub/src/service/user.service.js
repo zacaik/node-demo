@@ -14,7 +14,7 @@ class UserService {
     async getUserByName (name) {
         const statement = `SELECT * FROM users WHERE name = ?;`;
         const res = await connection.execute(statement, [name]);
-        return res[0]; // 第一个元素才是查询到的数据
+        return res[0]; // 第一个元素才是查询到的数据，也是数组
     }
 }
 

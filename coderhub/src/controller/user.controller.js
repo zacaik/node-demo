@@ -2,6 +2,7 @@
 const service = require("../service/user.service");
 
 class UserController {
+    // 用户注册
     async create (ctx, next) {
         const user = ctx.request.body;
 
