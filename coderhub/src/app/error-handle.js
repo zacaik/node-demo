@@ -19,6 +19,10 @@ const errorHandler = (error, ctx) => {
             status = 400;
             message = "用户名或密码不正确";
             break;         
+        case errorTypes.USER_UNAUTHORIZED:
+            status = 401;
+            message = "请重新登录";
+            break;
         default:
             status = 404;
             message = "默认错误";
