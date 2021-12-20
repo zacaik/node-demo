@@ -29,6 +29,24 @@ class MomentService {
             FROM moment LEFT JOIN users ON moment.user_id = users.id 
             LIMIT ?, ?;
         `;
+
+        // 一次性查询动态和该动态的评论
+        // const statement = `
+        // SELECT 
+        //     moment.id, moment.content, moment.createAt, moment.updateAt, 
+        //     JSON_OBJECT('id', users.id, 'name', users.name) AS user,
+        //     JSON_ARRAYAGG(
+        //         JSON_OBJECT(
+        //             'id', comment.id, 'content', comment.content, 'commentId', comment.comment_id,
+        //             'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+        //         )
+        //     ) comments
+        // FROM moment
+        // LEFT JOIN users ON moment.user_id = users.id
+        // LEFT JOIN comment ON comment.moment_id = moment.id
+        // LEFT JOIN users as cu ON comment.user_id = cu.id
+        // WHERE moment.id = 1;
+        // `;
         const [res] = await connection.execute(statement, [offset, size]);
         return res;
     }
