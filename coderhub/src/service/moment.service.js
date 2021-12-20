@@ -13,8 +13,15 @@ class MomentService {
     async getMomentById (momentId) {
         const statement = `
             SELECT moment.id, moment.content, moment.createAt, moment.updateAt, 
-            JSON_OBJECT('id', users.id, 'name', users.name) AS author
-            FROM moment LEFT JOIN users ON moment.user_id = users.id WHERE moment.id = 1;
+            JSON_OBJECT('id', users.id, 'name', users.name) AS author,
+            IF(COUNT(l.id), JSON_ARRAYAGG(
+                JSON_OBJECT('id', l.id, 'name', l.name)
+            ), NULL) labels
+            FROM moment 
+            LEFT JOIN users ON moment.user_id = users.id 
+            LEFT JOIN moment_label ml ON moment.id = ml.moment_id
+            LEFT JOIN label l ON ml.label_id = l.id
+            WHERE moment.id = ?;
         `;
         const [res] = await connection.execute(statement, [momentId]);
         return res[0];
@@ -25,7 +32,8 @@ class MomentService {
         const statement = `
             SELECT moment.id, moment.content, moment.createAt, moment.updateAt, 
             JSON_OBJECT('id', users.id, 'name', users.name) AS author,
-            (SELECT COUNT(*) FROM comment c WHERE c.moment_id = moment.id) commentCount
+            (SELECT COUNT(*) FROM comment c WHERE c.moment_id = moment.id) commentCount,
+            (SELECT COUNT(*) FROM moment_label ml WHERE ml.moment_id = moment.id) labelCount
             FROM moment LEFT JOIN users ON moment.user_id = users.id 
             LIMIT ?, ?;
         `;
@@ -62,6 +70,20 @@ class MomentService {
     async remove (momentId) {
         const statement = `DELETE FROM moment WHERE id = ?;`;
         const [res] = await connection.execute(statement, [momentId]);
+        return res;
+    }
+
+    // 判断动态是否以及存在某个标签
+    async hasLabel (momentId, labelId) {
+        const statement = `SELECT * FROM moment_label WHERE moment_id = ? AND label_id = ?;`;
+        const [res] = await connection.execute(statement, [momentId, labelId]);
+        return res.length !== 0;
+    }
+
+    // 添加动态与标签的对应关系
+    async addLabel (momentId, labelId) {
+        const statement = `INSERT INTO moment_label (moment_id, label_id) VALUES (?, ?);`;
+        const [res] = await connection.execute(statement, [momentId, labelId]);
         return res;
     }
 }

@@ -51,6 +51,7 @@ const verifyAuth = async (ctx, next) => {
         ctx.user = res;
         await next();
     } catch (error) {
+        console.log(error);
         error = new Error(errorType.USER_UNAUTHORIZED);
         ctx.app.emit("error", error, ctx);
     }
