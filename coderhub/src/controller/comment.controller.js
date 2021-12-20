@@ -28,5 +28,11 @@ class CommentController {
         const res = await service.remove(commentId);
         ctx.body = res;
     }
+
+    async list (ctx, next) {
+        const { momentId } = ctx.query;
+        const res = await service.getCommentsByMomentId(momentId);
+        ctx.body = res;
+    }
 }
 module.exports = new CommentController();
