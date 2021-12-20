@@ -19,6 +19,19 @@ class MomentController {
         const res = await momentService.getMomentList(offset, size);
         ctx.body = res;
     }
+
+    async update (ctx, next) {
+        const { momentId } = ctx.params;
+        const { content } = ctx.request.body;
+        const res = await momentService.update(content, momentId);
+        ctx.body = res;
+    }
+
+    async remove (ctx, next) {
+        const { momentId } = ctx.params;
+        const res = await momentService.remove(momentId);
+        ctx.body = res;
+    }
 }
 
 module.exports = new MomentController();

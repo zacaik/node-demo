@@ -31,6 +31,20 @@ class MomentService {
         const [res] = await connection.execute(statement, [offset, size]);
         return res;
     }
+
+    // 修改动态内容
+    async update (content, momentId) {
+        const statement = `UPDATE moment SET content = ? WHERE id = ?;`;
+        const [res] = await connection.execute(statement, [content, momentId]);
+        return res;
+    }
+
+    // 删除动态
+    async remove (momentId) {
+        const statement = `DELETE FROM moment WHERE id = ?;`;
+        const [res] = await connection.execute(statement, [momentId]);
+        return res;
+    }
 }
 
 module.exports = new MomentService();

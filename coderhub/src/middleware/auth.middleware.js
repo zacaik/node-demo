@@ -1,5 +1,6 @@
 const errorType = require("../constants/error-types");
-const service = require("../service/user.service");
+const userService = require("../service/user.service");
+const authService = require("../service/auth.service");
 const md5password = require("../utils/password-handle");
 const jwt = require("jsonwebtoken");
 const { PUBLIC_KEY } = require("../app/config");
@@ -15,7 +16,7 @@ const verifyLogin = async (ctx, next) => {
     }
 
     // 判断用户是否存在
-    const res = await service.getUserByName(name);
+    const res = await userService.getUserByName(name);
     const user = res[0];
     if (!user) {
         const error = new Error(errorType.NAME_NOT_EXISTS);
@@ -33,19 +34,20 @@ const verifyLogin = async (ctx, next) => {
     await next();
 };
 
-// 验证用户权限
+// 验证用户登录权限
 const verifyAuth = async (ctx, next) => {
     try {
         const authorization = ctx.headers.authorization;
         if (!authorization) {
             const err = new Error(errorType.USER_UNAUTHORIZED);
-            return ctx.app.emit("error", error, ctx);
+            return ctx.app.emit("error", err, ctx);
         }
 
         const token = authorization.replace("Bearer ", "");
         const res = jwt.verify(token, PUBLIC_KEY, {
             algorithms: ["RS256"],
         });
+        console.log(res);
         ctx.user = res;
         await next();
     } catch (error) {
@@ -54,7 +56,23 @@ const verifyAuth = async (ctx, next) => {
     }
 };
 
+// 验证修改操作的权限
+const verifyPermission = async (ctx, next) => {
+    const resourceName = Object.keys(ctx.params)[0].replace("Id", "");
+    const resourceId = ctx.params[resourceName + "Id"];
+    const { id } = ctx.user;
+    const isPermitted = await authService.checkPermission(resourceId, id, resourceName);
+    console.log(isPermitted);
+    if (isPermitted) {
+        await next();
+    } else {
+        const error = new Error(errorType.UPDATE_IS_NOT_PERMITTED);
+        return ctx.app.emit("error", error, ctx);
+    }
+}
+
 module.exports = {
     verifyLogin,
     verifyAuth,
+    verifyPermission,
 }

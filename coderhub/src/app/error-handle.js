@@ -23,6 +23,10 @@ const errorHandler = (error, ctx) => {
             status = 401;
             message = "请重新登录";
             break;
+        case errorTypes.UPDATE_IS_NOT_PERMITTED:
+            status = 401;
+            message = "该操作不具备权限";
+            break;
         default:
             status = 404;
             message = "默认错误";
