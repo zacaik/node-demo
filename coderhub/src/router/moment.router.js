@@ -11,6 +11,7 @@ const {
     update,
     remove,
     addLabels,
+    imgInfo
 } = require("../controller/moment.controller");
 
 const { verifyLabelExists } = require("../middleware/label.middleware");
@@ -23,6 +24,7 @@ momentRouter.get("/:momentId", detail); // 获取指定动态的内容
 momentRouter.patch("/:momentId", verifyAuth, verifyPermission, update); // 修改动态的内容
 momentRouter.delete("/:momentId", verifyAuth, verifyPermission, remove); // 删除动态
 momentRouter.post("/:momentId/labels", verifyAuth, verifyLabelExists, addLabels); // 给动态增加标签
+momentRouter.get("/images/:filename", imgInfo); // 查看动态配图
 
 
 module.exports = momentRouter;
