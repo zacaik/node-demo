@@ -16,6 +16,13 @@ class UserService {
         const res = await connection.execute(statement, [name]);
         return res[0]; // 第一个元素才是查询到的数据，也是数组
     }
+
+    // 保存用户头像url
+    async addAvatarUrl (id, url) {
+        const statement = `UPDATE users SET avatar_url = ? WHERE id = ?;`;
+        const res = await connection.execute(statement, [url, id]);
+        return res;
+    }
 }
 
 module.exports = new UserService();

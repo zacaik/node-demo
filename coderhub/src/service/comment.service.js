@@ -29,7 +29,7 @@ class CommentService {
         const statement = `
             SELECT 
                 comment.id, comment.content, comment.comment_id,
-                JSON_OBJECT('id', users.id, 'name', users.name) user
+                JSON_OBJECT('id', users.id, 'name', users.name, 'avatarUrl', avatar_url) user
             FROM comment 
             LEFT JOIN users ON users.id = comment.user_id
             WHERE moment_id = ?;
