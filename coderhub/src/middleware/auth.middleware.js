@@ -63,7 +63,6 @@ const verifyPermission = async (ctx, next) => {
     const resourceId = ctx.params[resourceName + "Id"];
     const { id } = ctx.user;
     const isPermitted = await authService.checkPermission(resourceId, id, resourceName);
-    console.log(isPermitted);
     if (isPermitted) {
         await next();
     } else {
